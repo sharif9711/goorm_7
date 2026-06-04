@@ -30,3 +30,6 @@ htmlcov/
 
 # Build
 frontend/dist/
+
+# Vercel
+.vercel/
