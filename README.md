@@ -173,9 +173,32 @@ pytest tests/ -v
 
 ## Deployment
 
-- **Frontend**: Vercel (`frontend/` directory)
-- **Backend**: Railway (`backend/` directory)
-- **Database**: Supabase PostgreSQL (enable pgvector extension)
+- **Frontend**: Vercel (`frontend/` directory) — https://frontend-nu-five-48.vercel.app
+- **Backend**: Railway (`backend/` directory) — see [backend/RAILWAY.md](backend/RAILWAY.md)
+- **Database**: Supabase PostgreSQL or Railway PostgreSQL (enable pgvector extension for RAG)
+
+### Railway Backend (5분 설정)
+
+```bash
+cd backend
+npm install -g @railway/cli
+railway login
+railway init --name goorm-7-backend
+# Dashboard에서 PostgreSQL 추가 후:
+railway variables set YOUTUBE_API_KEY=xxx OPENAI_API_KEY=xxx SECRET_KEY=xxx FRONTEND_URL=https://frontend-nu-five-48.vercel.app
+railway up
+railway domain
+```
+
+### Vercel Frontend 환경 변수
+
+Railway 배포 후 Backend URL을 Vercel에 설정:
+
+```
+VITE_API_URL=https://your-app.up.railway.app/api
+```
+
+Vercel Dashboard → Settings → Environment Variables → Redeploy
 
 ## License
 
