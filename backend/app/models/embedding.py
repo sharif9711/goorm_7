@@ -1,0 +1,23 @@
+from __future__ import annotations
+
+from datetime import datetime
+
+from pgvector.sqlalchemy import Vector
+from sqlalchemy import DateTime, Integer, String, Text, func
+from sqlalchemy.orm import Mapped, mapped_column
+
+from app.core.config import get_settings
+from app.core.database import Base
+
+settings = get_settings()
+
+
+class EmbeddingDocument(Base):
+    __tablename__ = "embedding_documents"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    source_type: Mapped[str] = mapped_column(String(50), index=True)
+    source_id: Mapped[str] = mapped_column(String(64), index=True)
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+    embedding = mapped_column(Vector(settings.EMBEDDING_DIMENSION))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
