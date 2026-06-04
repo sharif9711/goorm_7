@@ -2,9 +2,26 @@ from __future__ import annotations
 
 import os
 from functools import lru_cache
+from urllib.parse import quote_plus, unquote
 
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+def _encode_database_url(url: str) -> str:
+    """Re-encode credentials so special characters in passwords do not break the URL."""
+    if "://" not in url:
+        return url
+    scheme, rest = url.split("://", 1)
+    if "@" not in rest:
+        return url
+    creds, hostpart = rest.rsplit("@", 1)
+    if ":" not in creds:
+        return url
+    user, password = creds.split(":", 1)
+    user = quote_plus(unquote(user), safe="")
+    password = quote_plus(unquote(password), safe="")
+    return f"{scheme}://{user}:{password}@{hostpart}"
 
 
 def _normalize_database_url(url: str, async_driver: bool = True) -> str:
@@ -15,7 +32,11 @@ def _normalize_database_url(url: str, async_driver: bool = True) -> str:
         url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
     elif not async_driver and "+asyncpg" in url:
         url = url.replace("postgresql+asyncpg://", "postgresql://", 1)
-    return url
+    if "?" in url:
+        base, _, query = url.partition("?")
+        if "sslmode=" in query:
+            url = base
+    return _encode_database_url(url)
 
 
 class Settings(BaseSettings):
