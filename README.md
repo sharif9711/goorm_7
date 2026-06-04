@@ -173,32 +173,27 @@ pytest tests/ -v
 
 ## Deployment
 
-- **Frontend**: Vercel (`frontend/` directory) — https://frontend-nu-five-48.vercel.app
-- **Backend**: Railway (`backend/` directory) — see [backend/RAILWAY.md](backend/RAILWAY.md)
-- **Database**: Supabase PostgreSQL or Railway PostgreSQL (enable pgvector extension for RAG)
+| 구성요소 | 서비스 | 문서 |
+|---------|--------|------|
+| Frontend | [Vercel](https://vercel.com) | https://frontend-nu-five-48.vercel.app |
+| Backend | Docker | [backend/DEPLOY.md](backend/DEPLOY.md) |
+| Database | [Supabase](https://supabase.com) PostgreSQL + pgvector | [backend/DEPLOY.md](backend/DEPLOY.md) |
 
-### Railway Backend (5분 설정)
+### 빠른 시작 (Production)
+
+1. **Supabase** — PostgreSQL 프로젝트 생성 + `CREATE EXTENSION vector`
+2. **Backend** — Docker로 배포 (VPS / Render 등), Supabase `DATABASE_URL` 설정
+3. **Vercel** — `VITE_API_URL=https://your-backend-url/api` 설정 후 Redeploy
 
 ```bash
-cd backend
-npm install -g @railway/cli
-railway login
-railway init --name goorm-7-backend
-# Dashboard에서 PostgreSQL 추가 후:
-railway variables set YOUTUBE_API_KEY=xxx OPENAI_API_KEY=xxx SECRET_KEY=xxx FRONTEND_URL=https://frontend-nu-five-48.vercel.app
-railway up
-railway domain
+# 로컬 전체 스택
+docker compose up -d
+
+# Production (Supabase DB + Backend만)
+docker compose -f docker-compose.prod.yml up -d
 ```
 
-### Vercel Frontend 환경 변수
-
-Railway 배포 후 Backend URL을 Vercel에 설정:
-
-```
-VITE_API_URL=https://your-app.up.railway.app/api
-```
-
-Vercel Dashboard → Settings → Environment Variables → Redeploy
+자세한 단계: **[backend/DEPLOY.md](backend/DEPLOY.md)**
 
 ## License
 

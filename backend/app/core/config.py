@@ -8,7 +8,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 def _normalize_database_url(url: str, async_driver: bool = True) -> str:
-    """Convert Railway/Heroku postgres URLs to SQLAlchemy format."""
+    """Convert cloud postgres URLs (Supabase, etc.) to SQLAlchemy format."""
     if url.startswith("postgres://"):
         url = url.replace("postgres://", "postgresql://", 1)
     if async_driver and url.startswith("postgresql://") and "+asyncpg" not in url:
