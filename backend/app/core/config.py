@@ -67,6 +67,12 @@ class Settings(BaseSettings):
             return _normalize_database_url(db_url, async_driver=False)
         return _normalize_database_url(v, async_driver=False)
 
+    def get_openai_api_key(self) -> str:
+        key = self.OPENAI_API_KEY.strip()
+        if key in ("", "your_openai_api_key", "your-key", "sk-xxx"):
+            return ""
+        return key
+
     def get_cors_origins(self) -> list[str]:
         origins = list(self.CORS_ORIGINS)
         if self.FRONTEND_URL and self.FRONTEND_URL not in origins:

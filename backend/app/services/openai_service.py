@@ -12,7 +12,7 @@ settings = get_settings()
 
 class OpenAIService:
     def __init__(self, api_key: str | None = None):
-        self.api_key = api_key or settings.OPENAI_API_KEY
+        self.api_key = api_key or settings.get_openai_api_key()
         self.client = AsyncOpenAI(api_key=self.api_key) if self.api_key else None
         self.model = settings.OPENAI_MODEL
         self.embedding_model = settings.OPENAI_EMBEDDING_MODEL
